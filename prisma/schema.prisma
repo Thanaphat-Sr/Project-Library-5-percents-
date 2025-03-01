@@ -24,18 +24,18 @@ model Author {
 }
 
 model Book {
-  id          Int      @id @default(autoincrement())
+  id          Int       @id @default(autoincrement())
   title       String
-  isbn        String   @unique
+  isbn        String
   category    String
   authorId    Int
-  author      Author   @relation(fields: [authorId], references: [id])
+  author      Author    @relation(fields: [authorId], references: [id])
   borrowings  Borrowing[]
 }
 
 model Member {
-  id          Int      @id @default(autoincrement())
-  memberId    String   @unique
+  id          Int         @id @default(autoincrement())
+  memberId    String
   firstName   String
   lastName    String
   phoneNumber String
@@ -43,14 +43,14 @@ model Member {
 }
 
 model Borrowing {
-  id          Int      @id @default(autoincrement())
-  memberId    Int
-  bookId      Int
-  borrowedAt  DateTime
-  dueDate     DateTime
-  returnedAt  DateTime?
-  member      Member    @relation(fields: [memberId], references: [id])
-  book        Book      @relation(fields: [bookId], references: [id])
+  id         Int      @id @default(autoincrement())
+  memberId   Int
+  bookId     Int
+  borrowedAt DateTime
+  dueDate    DateTime
+  returnedAt DateTime?
+  member     Member   @relation(fields: [memberId], references: [id])
+  book       Book     @relation(fields: [bookId], references: [id])
 }
 
 //http://localhost:9000/

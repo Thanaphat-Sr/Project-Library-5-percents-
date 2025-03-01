@@ -1,22 +1,17 @@
-import { Router } from 'express';
-import bookRepositoryPrisma from '../repository/bookRepositoryPrisma';
+import express from 'express';
+import BookService from '../services/bookService';
 
-const router = Router();
-const bookController = new bookRepositoryPrisma();
-
-router.post('/', async (req, res) => {
-    const book = await bookController.createBook(req.body);
-    res.json(book);
-});
-
-router.get('/', async (req, res) => {
-    await bookController.getAllBooks(req, res);
-});
+const router = express.Router();
+const bookService = new BookService();
 
 router.get('/search', async (req, res) => {
-    const { title } = req.query;
-    const books = await bookController.searchBooksByTitle(req, res);
-    res.json(books);
+    const { keyword, page = 1, pageSize = 10 } = req.query;
+    try {
+        const books = await bookService.searchBooks(keyword as string, parseInt(page as string), parseInt(pageSize as string));
+        res.status(200).json(books);
+    } catch (error) {
+        res.status(500).json({ error: (error as Error).message });
+    }
 });
 
 export default router;

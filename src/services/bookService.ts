@@ -1,85 +1,48 @@
 import { PrismaClient } from '@prisma/client';
 
+const prisma = new PrismaClient();
+
 class BookService {
-    searchBooksByTitle(title: string) {
-        throw new Error('Method not implemented.');
-    }
-    private prisma: PrismaClient;
+    async searchBooks(keyword: string, page: number, pageSize: number) {
+        const skip = (page - 1) * pageSize;
+        const take = pageSize;
 
-    constructor() {
-        this.prisma = new PrismaClient();
-    }
-
-    async createBook(data: { title: string; isbn: string; category: string; authorId: number }) {
-        return await this.prisma.book.create({
-            data,
-        });
-    }
-
-    async getAllBooks() {
-        return await this.prisma.book.findMany({
+        const books = await prisma.book.findMany({
+            where: {
+                OR: [
+                    { title: { contains: keyword} },
+                    { category: { contains: keyword} },
+                    { author: {
+                        OR: [
+                            { firstName: { contains: keyword} },
+                            { lastName: { contains: keyword} }
+                        ]
+                    }},
+                    { borrowings: {
+                        some: {
+                            member: {
+                                OR: [
+                                    { firstName: { contains: keyword} },
+                                    { lastName: { contains: keyword} }
+                                ]
+                            }
+                        }
+                    }}
+                ]
+            },
+            skip,
+            take,
             include: {
                 author: true,
-            },
+                borrowings: {
+                    include: {
+                        member: true
+                    }
+                }
+            }
         });
-    }
 
-    async getBookById(id: number) {
-        return await this.prisma.book.findUnique({
-            where: { id },
-            include: {
-                author: true,
-            },
-        });
-    }
-
-    async updateBook(id: number, data: { title?: string; isbn?: string; category?: string; authorId?: number }) {
-        return await this.prisma.book.update({
-            where: { id },
-            data,
-        });
-    }
-
-    async deleteBook(id: number) {
-        return await this.prisma.book.delete({
-            where: { id },
-        });
-    }
-
-    async findBooksByTitle(title: string) {
-        return await this.prisma.book.findMany({
-            where: {
-                title: {
-                    contains: title,
-                },
-            },
-        });
-    }
-
-    async findBooksDueToday() {
-        const today = new Date();
-        return await this.prisma.borrowing.findMany({
-            where: {
-                dueDate: today,
-                returnedAt: null,
-            },
-            include: {
-                book: true,
-                member: true,
-            },
-        });
-    }
-
-    async findBooksNotReturned() {
-        return await this.prisma.borrowing.findMany({
-            where: {
-                returnedAt: null,
-            },
-            include: {
-                book: true,
-                member: true,
-            },
-        });
+        return books;
     }
 }
 
