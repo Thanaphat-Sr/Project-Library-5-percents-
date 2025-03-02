@@ -6,7 +6,8 @@
     "start": "node dist/server.js",
     "dev": "ts-node-dev src/server.ts",
     "build": "tsc",
-    "seed": "ts-node prisma/seed.ts"
+    "seed": "ts-node prisma/seed.ts",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@prisma/client": "^2.30.0",
@@ -14,8 +15,6 @@
     "project-library": "file:"
   },
   "devDependencies": {
-    "@types/express": "^5.0.0",
-    "@types/qs": "^6.9.18",
     "prisma": "^2.30.0",
     "ts-node": "^10.0.0",
     "ts-node-dev": "^1.1.8",
