@@ -12,14 +12,24 @@ class bookRepositoryPrisma {
     }
 
     public async getAllBooks(req: Request, res: Response): Promise<void> {
-        const books = await this.bookService.getAllBooks();
-        res.json(books);
+        try {
+            const books = await this.bookService.getAllBooks();
+            res.json(books);
+        } catch (error) {
+            const errorMessage = (error as Error).message;
+            res.status(500).json({ error: errorMessage });
+        }
     }
 
     public async searchBooksByTitle(req: Request, res: Response): Promise<void> {
-        const title = req.query.title as string;
-        const books = await this.bookService.searchBooksByTitle(title);
-        res.json(books);
+        try {
+            const title = req.query.title as string;
+            const books = await this.bookService.searchBooksByTitle(title);
+            res.json(books);
+        } catch (error) {
+            const errorMessage = (error as Error).message;
+            res.status(500).json({ error: errorMessage });
+        }
     }
 }
 
