@@ -4,11 +4,14 @@
 // Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
-// filepath: /library-app/prisma/schema.prisma
-// filepath: /library-app/prisma/schema.prisma
+// datasource db {
+//   provider = "mysql"
+//   url      = env("DATABASE_URL")
+// }
+
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider = "postgresql"
+  url      = env("DIRECT_URL")
 }
 
 generator client {
@@ -52,5 +55,4 @@ model Borrowing {
   member     Member   @relation(fields: [memberId], references: [id])
   book       Book     @relation(fields: [bookId], references: [id])
 }
-
 //http://localhost:9000/
